@@ -10,18 +10,23 @@ import java.util.List;
 import jm.task.core.jdbc.util.Util;
 
 public class UserDaoJDBCImpl implements UserDao {
-
-    //todo: выносим переменные из тела метода(ов)
-    private final String createUsersQuery = "create table if not exists users (id INT AUTO_INCREMENT PRIMARY KEY NOT NULL, name VARCHAR(64) NOT NULL, lastName VARCHAR(64) NOT NULL, age TINYINT)";
-
-    private Connection connection = Util.getConnection();
+    private String createUsersQuery = "create table if not exists users" +
+            "(id INT AUTO_INCREMENT PRIMARY KEY NOT NULL," +
+            " name VARCHAR(64) NOT NULL," +
+            " lastName VARCHAR(64) NOT NULL, age TINYINT)";
+    private String dropUsersQuery = "drop table if exists users";
+    private String saveUserQuery = "insert into users (name, lastname, age) VALUES(?, ?, ?)";
+    private String removeUserByIdQuery = "delete from users where id = ?";
+    private String getAllUsersQuery = "select * from users";
+    private String cleanUsersQuery = "truncate table users";
+    private List<User> usersList = new ArrayList<>();
+    private Connection connection;
 
     public UserDaoJDBCImpl() {
-
+        connection = new Util().getConnection();
     }
 
     public void createUsersTable() {
-
         try (PreparedStatement preparedStatement = connection.prepareStatement(createUsersQuery)) {
             preparedStatement.execute();
         } catch (SQLException e) {
@@ -30,8 +35,7 @@ public class UserDaoJDBCImpl implements UserDao {
     }
 
     public void dropUsersTable() {
-        String query = "drop table if exists users";
-        try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+        try (PreparedStatement preparedStatement = connection.prepareStatement(dropUsersQuery)) {
             preparedStatement.execute();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -39,8 +43,7 @@ public class UserDaoJDBCImpl implements UserDao {
     }
 
     public void saveUser(String name, String lastName, byte age) {
-        String query = "insert into users (name, lastname, age) VALUES(?, ?, ?)";
-        try (PreparedStatement  preparedStatement = connection.prepareStatement(query)) {
+        try (PreparedStatement preparedStatement = connection.prepareStatement(saveUserQuery)) {
             preparedStatement.setString(1, name);
             preparedStatement.setString(2, lastName);
             preparedStatement.setByte(3, age);
@@ -51,8 +54,8 @@ public class UserDaoJDBCImpl implements UserDao {
     }
 
     public void removeUserById(long id) {
-        String query = "delete from users where id=" + id;
-        try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+        try (PreparedStatement preparedStatement = connection.prepareStatement(removeUserByIdQuery)) {
+            preparedStatement.setLong(1, id);
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -60,10 +63,8 @@ public class UserDaoJDBCImpl implements UserDao {
     }
 
     public List<User> getAllUsers() {
-        String query = "select * from users";
-        List<User> usersList = new ArrayList<>();
-        try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
-            ResultSet resultSet = preparedStatement.executeQuery(query);
+        try (PreparedStatement preparedStatement = connection.prepareStatement(getAllUsersQuery)) {
+            ResultSet resultSet = preparedStatement.executeQuery(getAllUsersQuery);
             while (resultSet.next()) {
                 User user = new User();
                 user.setId(resultSet.getLong("id"));
@@ -79,8 +80,7 @@ public class UserDaoJDBCImpl implements UserDao {
     }
 
     public void cleanUsersTable() {
-        String query = "truncate table users";
-        try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+        try (PreparedStatement preparedStatement = connection.prepareStatement(cleanUsersQuery)) {
             preparedStatement.execute();
         } catch (SQLException e) {
             e.printStackTrace();
