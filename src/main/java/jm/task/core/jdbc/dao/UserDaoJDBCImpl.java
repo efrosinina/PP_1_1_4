@@ -10,14 +10,19 @@ import java.util.List;
 import jm.task.core.jdbc.util.Util;
 
 public class UserDaoJDBCImpl implements UserDao {
+
+    //todo: выносим переменные из тела метода(ов)
+    private final String createUsersQuery = "create table if not exists users (id INT AUTO_INCREMENT PRIMARY KEY NOT NULL, name VARCHAR(64) NOT NULL, lastName VARCHAR(64) NOT NULL, age TINYINT)";
+
     private Connection connection = Util.getConnection();
+
     public UserDaoJDBCImpl() {
 
     }
 
     public void createUsersTable() {
-        String query = "create table if not exists users (id INT AUTO_INCREMENT PRIMARY KEY NOT NULL, name VARCHAR(64) NOT NULL, lastName VARCHAR(64) NOT NULL, age TINYINT)";
-        try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(createUsersQuery)) {
             preparedStatement.execute();
         } catch (SQLException e) {
             e.printStackTrace();
