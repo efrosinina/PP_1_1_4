@@ -11,7 +11,7 @@ import java.util.Properties;
 public class Util {
     private static SessionFactory sessionFactory;
     static final String DB_DRIVER = "com.mysql.cj.jdbc.Driver";
-    static final String DB_URL = "jdbc:mysql://localhost:3306/users";
+    static final String DB_URL = "jdbc:mysql://localhost:3306/user";
     static final String DB_USER = "root";
     static final String DB_PASSWORD = "LizaWizard77@";
 

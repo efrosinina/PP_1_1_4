@@ -18,7 +18,7 @@ public class Main {
         System.out.println(user.getAllUsers().get(3));
         System.out.println(user.getAllUsers().toString());
 
-        user.removeUserById(1);
+        user.removeUserById(4);
         System.out.println(user.getAllUsers().toString());
         user.getAllUsers();
         System.out.println(user.getAllUsers().toString());
